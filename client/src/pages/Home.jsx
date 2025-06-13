@@ -23,7 +23,7 @@ const Home = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const res = await fetch("http://localhost:5000/api/form/submit", {
+            const res = await fetch(`${import.meta.env.VITE_APP_BASE_URL}/api/form/submit`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(formData),

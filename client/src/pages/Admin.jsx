@@ -11,7 +11,7 @@ const Admin = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await fetch("http://localhost:5000/api/form/all");
+        const res = await fetch(`${import.meta.env.VITE_APP_BASE_URL}/api/form/all`);
         const data = await res.json();
         setForms(data);
       } catch (error) {
