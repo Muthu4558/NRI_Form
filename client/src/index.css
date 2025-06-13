@@ -1,0 +1,6 @@
+@import "tailwindcss";
+
+
+.form-input-style {
+  @apply border border-[#229ea6] rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-[#229ea6] w-full;
+}
