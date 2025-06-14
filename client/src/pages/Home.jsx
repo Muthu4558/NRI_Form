@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
-import { FaUser, FaHeartbeat, FaUsers } from 'react-icons/fa';
+import { FaUser, FaHeartbeat, FaUsers, FaTrashAlt } from 'react-icons/fa';
 
 const Home = () => {
     useEffect(() => {
@@ -63,6 +63,12 @@ const Home = () => {
         });
     };
 
+    const handleRemoveLovedOne = (index) => {
+        const updated = [...formData.lovedOnes];
+        updated.splice(index, 1);
+        setFormData({ ...formData, lovedOnes: updated });
+    };
+
     const ThankYouMessage = () => (
         <div className="flex flex-col justify-center items-center min-h-screen bg-[#229ea6] text-white px-6 text-center">
             <h1 className="text-5xl font-bold mb-4">🎉 Thank you!</h1>
@@ -80,6 +86,7 @@ const Home = () => {
                 <h1 className="text-4xl font-bold text-center text-[#229ea6] mb-10 tracking-wide">💖 Health Assistance Form</h1>
 
                 <form className="space-y-10" onSubmit={handleSubmit}>
+                    {/* Contact Info */}
                     <section data-aos="fade-right">
                         <h2 className="flex items-center text-2xl font-semibold mb-4 text-[#229ea6]"><FaUser className="mr-2" /> Contact Information</h2>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -90,11 +97,12 @@ const Home = () => {
                         </div>
                     </section>
 
+                    {/* Loved Ones Section */}
                     <section data-aos="fade-left">
                         <h2 className="flex items-center text-2xl font-semibold mb-4 text-[#229ea6]"><FaUsers className="mr-2" /> Loved Ones</h2>
 
                         {formData.lovedOnes.map((person, i) => (
-                            <div key={i} className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-4">
+                            <div key={i} className="grid grid-cols-1 md:grid-cols-6 gap-4 mb-4 items-center">
                                 <input type="text" placeholder="Name" className="form-input-style" value={person.name} onChange={(e) => handleLovedOneChange(i, 'name', e.target.value)} />
                                 <input type="text" placeholder="Age" className="form-input-style" value={person.age} onChange={(e) => handleLovedOneChange(i, 'age', e.target.value)} />
                                 <select className="form-input-style" value={person.gender} onChange={(e) => handleLovedOneChange(i, 'gender', e.target.value)}>
@@ -104,6 +112,12 @@ const Home = () => {
                                 </select>
                                 <input type="text" placeholder="City" className="form-input-style" value={person.city} onChange={(e) => handleLovedOneChange(i, 'city', e.target.value)} />
                                 <input type="text" placeholder="Indian Contact Number" className="form-input-style" value={person.contact} onChange={(e) => handleLovedOneChange(i, 'contact', e.target.value)} />
+                                
+                                {formData.lovedOnes.length > 1 && (
+                                    <button type="button" onClick={() => handleRemoveLovedOne(i)} className="text-red-600 hover:text-red-800">
+                                        <FaTrashAlt />
+                                    </button>
+                                )}
                             </div>
                         ))}
 
@@ -118,6 +132,7 @@ const Home = () => {
                         </div>
                     </section>
 
+                    {/* Medical Info Section */}
                     <section data-aos="fade-up">
                         <h2 className="flex items-center text-2xl font-semibold mb-4 text-[#229ea6]"><FaHeartbeat className="mr-2" /> Medical Info</h2>
                         <textarea name="healthIssues" placeholder="Any health issues?" rows="4" className="form-input-style w-full" value={formData.healthIssues} onChange={handleChange} />
