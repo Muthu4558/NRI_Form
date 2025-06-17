@@ -128,7 +128,6 @@ const Home = () => {
                 </h1>
 
                 <form className="space-y-12" onSubmit={handleSubmit}>
-
                     {/* Contact Info */}
                     <section className="space-y-6">
                         <div className="border-l-4 border-[#d81b60] pl-4">
@@ -192,11 +191,15 @@ const Home = () => {
                                 </select>
                                 <input type="text" placeholder="Area" className="fancy-input md:col-span-2" value={p.area} onChange={(e) => handleLovedOneChange(i, 'area', e.target.value)} />
                                 {formData.lovedOnes.length > 1 && (
-                                    <button type="button" onClick={() => handleRemoveLovedOne(i)} className="text-red-500 hover:text-red-700 text-lg">🗑 Remove</button>
+                                    <button type="button" onClick={() => handleRemoveLovedOne(i)} className="cursor-pointer text-red-500 hover:text-red-700 text-lg">
+                                        🗑 Remove
+                                    </button>
                                 )}
                             </div>
                         ))}
-                        <button type="button" onClick={handleAddLovedOne} className="bg-[#d81b60] text-white px-6 py-2 rounded-full hover:bg-[#ad1457] shadow-lg transition">+ Add Member</button>
+                        <button type="button" onClick={handleAddLovedOne} className="cursor-pointer bg-[#d81b60] text-white px-6 py-2 rounded-full hover:bg-[#ad1457] shadow-lg transition">
+                            + Add Member
+                        </button>
                     </section>
 
                     {/* Medical Info */}
@@ -218,7 +221,7 @@ const Home = () => {
                     <div className="text-center">
                         <button
                             type="submit"
-                            className="bg-[#d81b60] hover:bg-[#ad1457] text-white text-xl px-10 py-3 rounded-full shadow-xl hover:scale-105 transition duration-300"
+                            className="cursor-pointer bg-[#d81b60] hover:bg-[#ad1457] text-white text-xl px-10 py-3 rounded-full shadow-xl hover:scale-105 transition duration-300"
                         >
                             🚀 Submit Enquiry
                         </button>
