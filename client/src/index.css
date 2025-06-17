@@ -1,6 +1,15 @@
 @import "tailwindcss";
+/* in index.css */
+@import 'intl-tel-input/build/css/intlTelInput.css';
 
-
-.form-input-style {
-  @apply border border-[#229ea6] rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-[#229ea6] w-full;
+.iti {
+  width: 100%;
 }
+
+.iti__flag-container {
+  z-index: 1000;
+}
+
+.fancy-input {
+    @apply w-full px-4 py-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#d81b60] bg-white shadow;
+  }

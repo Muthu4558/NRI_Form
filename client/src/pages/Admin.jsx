@@ -31,7 +31,9 @@ const Admin = () => {
       entry.mobile,
       entry.healthIssues || "None",
       Object.entries(entry.checklist || {}).filter(([_, v]) => v).map(([k]) => k).join(", "),
-      entry.lovedOnes?.map(p => `${p.name} (${p.age}, ${p.gender}, ${p.city})`).join("; ")
+      entry.lovedOnes?.map(p =>
+        `${p.name} (${p.age}, ${p.gender}, ${p.state}, ${p.district}, ${p.area})`
+      ).join("; ")
     ]);
 
     doc.autoTable({
@@ -52,7 +54,9 @@ const Admin = () => {
       Phone: entry.mobile,
       "Health Issues": entry.healthIssues || "None",
       Checklist: Object.entries(entry.checklist || {}).filter(([_, v]) => v).map(([k]) => k).join(", "),
-      "Loved Ones": entry.lovedOnes?.map(p => `${p.name} (${p.age}, ${p.gender}, ${p.city})`).join("; ")
+      "Loved Ones": entry.lovedOnes?.map(p =>
+        `${p.name} (${p.age}, ${p.gender}, ${p.state}, ${p.district}, ${p.area})`
+      ).join("; ")
     }));
 
     const ws = XLSX.utils.json_to_sheet(worksheetData);
@@ -118,7 +122,10 @@ const Admin = () => {
                   <p className="text-sm font-medium text-gray-800">👤 {person.name}</p>
                   <p className="text-sm text-gray-600">Age: {person.age}</p>
                   <p className="text-sm text-gray-600">Gender: {person.gender}</p>
-                  <p className="text-sm text-gray-600 flex items-center"><FaCity className="mr-1" /> City: {person.city}</p>
+                  <p className="text-sm text-gray-600"><FaCity className="inline mr-1" /> State: {person.state}</p>
+<p className="text-sm text-gray-600">District: {person.district}</p>
+<p className="text-sm text-gray-600">Area: {person.area}</p>
+
                   <p className="text-sm text-gray-600">📞 Contact: {person.contact}</p>
                 </div>
               ))}

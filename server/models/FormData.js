@@ -4,7 +4,9 @@ const lovedOneSchema = new mongoose.Schema({
   name: String,
   age: String,
   gender: String,
-  city: String,
+  state: String,
+  district: String,
+  area: String,
   contact: String,
 });
 
@@ -13,7 +15,6 @@ const formDataSchema = new mongoose.Schema({
   lastName: String,
   email: String,
   mobile: String,
-  familyCount: String,
   lovedOnes: [lovedOneSchema],
   healthIssues: String,
   checklist: {

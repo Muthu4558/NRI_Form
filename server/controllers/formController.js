@@ -2,6 +2,7 @@ import FormData from "../models/FormData.js";
 
 export const submitForm = async (req, res) => {
   try {
+    // console.log("Submitted form data:", JSON.stringify(req.body, null, 2)); // 👈 Check this!
     const newForm = new FormData(req.body);
     await newForm.save();
     res.status(201).json({ message: "Form submitted successfully!" });
