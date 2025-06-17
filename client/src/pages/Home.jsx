@@ -55,27 +55,27 @@ const Home = () => {
     }, []);
 
     const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    try {
-        const res = await fetch(`${import.meta.env.VITE_APP_BASE_URL}/api/form/submit`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(formData),
-        });
-        const data = await res.json();
-        if (res.ok) {
-            setIsSubmitted(true);
-        } else {
-            alert('Submission failed');
-            console.log(data);
+        e.preventDefault();
+        setLoading(true);
+        try {
+            const res = await fetch(`${import.meta.env.VITE_APP_BASE_URL}/api/form/submit`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(formData),
+            });
+            const data = await res.json();
+            if (res.ok) {
+                setIsSubmitted(true);
+            } else {
+                alert('Submission failed');
+                console.log(data);
+            }
+        } catch (error) {
+            console.error('Error submitting form:', error);
+        } finally {
+            setLoading(false);
         }
-    } catch (error) {
-        console.error('Error submitting form:', error);
-    } finally {
-        setLoading(false);
-    }
-};
+    };
 
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
@@ -128,14 +128,14 @@ const Home = () => {
         <div className="min-h-screen bg-gradient-to-br from-[#e0f7fa] to-[#fce4ec] p-6 flex items-center justify-center">
             <div className="w-full max-w-4xl bg-white/70 backdrop-blur-lg rounded-3xl shadow-2xl p-10">
                 <h1 className="text-5xl font-extrabold text-center text-[#d81b60] mb-10 tracking-wider font-serif">
-                    🌍 NRI Enquiry Portal
+                    NRI Enquiry Portal
                 </h1>
 
                 <form className="space-y-12" onSubmit={handleSubmit}>
                     {/* Contact Info */}
                     <section className="space-y-6">
                         <div className="border-l-4 border-[#d81b60] pl-4">
-                            <h2 className="text-2xl font-bold text-[#d81b60]">👤 Contact Information</h2>
+                            <h2 className="text-2xl font-bold text-[#d81b60]">Contact Information</h2>
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                             <input type="text" name="firstName" placeholder="First Name" className="fancy-input" value={formData.firstName} onChange={handleChange} required />
@@ -148,7 +148,7 @@ const Home = () => {
                     {/* Loved Ones */}
                     <section className="space-y-6">
                         <div className="border-l-4 border-[#d81b60] pl-4">
-                            <h2 className="text-2xl font-bold text-[#d81b60]">👨‍👩‍👧‍👦 Loved Ones Details</h2>
+                            <h2 className="text-2xl font-bold text-[#d81b60]">Loved Ones Details</h2>
                         </div>
                         {formData.lovedOnes.map((p, i) => (
                             <div key={i} className="grid grid-cols-1 md:grid-cols-4 gap-4 bg-[#fce4ec]/40 p-4 rounded-xl">
@@ -196,7 +196,7 @@ const Home = () => {
                                 <input type="text" placeholder="Area" className="fancy-input md:col-span-2" value={p.area} onChange={(e) => handleLovedOneChange(i, 'area', e.target.value)} />
                                 {formData.lovedOnes.length > 1 && (
                                     <button type="button" onClick={() => handleRemoveLovedOne(i)} className="cursor-pointer text-red-500 hover:text-red-700 text-lg">
-                                        🗑 Remove
+                                        Remove
                                     </button>
                                 )}
                             </div>
@@ -209,7 +209,7 @@ const Home = () => {
                     {/* Medical Info */}
                     <section className="space-y-6">
                         <div className="border-l-4 border-[#d81b60] pl-4">
-                            <h2 className="text-2xl font-bold text-[#d81b60]">🩺 Medical Information</h2>
+                            <h2 className="text-2xl font-bold text-[#d81b60]">Medical Information</h2>
                         </div>
                         <textarea name="healthIssues" placeholder="Describe health issues..." rows="4" className="fancy-input w-full" value={formData.healthIssues} onChange={handleChange} />
                         <div className="flex gap-4 flex-wrap">
@@ -224,25 +224,23 @@ const Home = () => {
 
                     <div className="text-center">
                         <button
-    type="submit"
-    disabled={loading}
-    className={`cursor-pointer bg-[#d81b60] hover:bg-[#ad1457] text-white text-xl px-10 py-3 rounded-full shadow-xl transition duration-300 ${
-        loading ? 'opacity-70 cursor-not-allowed' : 'hover:scale-105'
-    }`}
->
-    {loading ? (
-        <span className="flex items-center justify-center gap-2">
-            <svg className="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-            </svg>
-            Submitting...
-        </span>
-    ) : (
-        "🚀 Submit Enquiry"
-    )}
-</button>
-
+                            type="submit"
+                            disabled={loading}
+                            className={`cursor-pointer bg-[#d81b60] hover:bg-[#ad1457] text-white text-xl px-10 py-3 rounded-full shadow-xl transition duration-300 ${loading ? 'opacity-70 cursor-not-allowed' : 'hover:scale-105'
+                                }`}
+                        >
+                            {loading ? (
+                                <span className="flex items-center justify-center gap-2">
+                                    <svg className="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
+                                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                                    </svg>
+                                    Submitting...
+                                </span>
+                            ) : (
+                                "Submit Enquiry"
+                            )}
+                        </button>
                     </div>
                 </form>
             </div>
