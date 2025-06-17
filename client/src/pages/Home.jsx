@@ -10,6 +10,7 @@ import india from '../assets/indiaData.json';
 const Home = () => {
     const phoneInputRef = useRef(null);
     const itiRef = useRef(null);
+    const [loading, setLoading] = useState(false);
 
     const [formData, setFormData] = useState({
         firstName: '',
@@ -54,24 +55,27 @@ const Home = () => {
     }, []);
 
     const handleSubmit = async (e) => {
-        e.preventDefault();
-        try {
-            const res = await fetch(`${import.meta.env.VITE_APP_BASE_URL}/api/form/submit`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(formData),
-            });
-            const data = await res.json();
-            if (res.ok) {
-                setIsSubmitted(true);
-            } else {
-                alert('Submission failed');
-                console.log(data);
-            }
-        } catch (error) {
-            console.error('Error submitting form:', error);
+    e.preventDefault();
+    setLoading(true);
+    try {
+        const res = await fetch(`${import.meta.env.VITE_APP_BASE_URL}/api/form/submit`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(formData),
+        });
+        const data = await res.json();
+        if (res.ok) {
+            setIsSubmitted(true);
+        } else {
+            alert('Submission failed');
+            console.log(data);
         }
-    };
+    } catch (error) {
+        console.error('Error submitting form:', error);
+    } finally {
+        setLoading(false);
+    }
+};
 
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
@@ -220,11 +224,25 @@ const Home = () => {
 
                     <div className="text-center">
                         <button
-                            type="submit"
-                            className="cursor-pointer bg-[#d81b60] hover:bg-[#ad1457] text-white text-xl px-10 py-3 rounded-full shadow-xl hover:scale-105 transition duration-300"
-                        >
-                            🚀 Submit Enquiry
-                        </button>
+    type="submit"
+    disabled={loading}
+    className={`cursor-pointer bg-[#d81b60] hover:bg-[#ad1457] text-white text-xl px-10 py-3 rounded-full shadow-xl transition duration-300 ${
+        loading ? 'opacity-70 cursor-not-allowed' : 'hover:scale-105'
+    }`}
+>
+    {loading ? (
+        <span className="flex items-center justify-center gap-2">
+            <svg className="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+            </svg>
+            Submitting...
+        </span>
+    ) : (
+        "🚀 Submit Enquiry"
+    )}
+</button>
+
                     </div>
                 </form>
             </div>
