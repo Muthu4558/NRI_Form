@@ -1,17 +1,30 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import 'intl-tel-input/build/css/intlTelInput.css';
+import { Toaster } from 'react-hot-toast';
 import Home from './pages/Home.jsx';
 import Admin from './pages/Admin.jsx';
+import Login from './pages/Login.jsx';
+import PrivateRoute from './components/PrivateRoute.jsx';
 
 const App = () => {
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/admin" element={<Admin />} />
-      </Routes>
-    </Router>
+    <>
+      <Toaster position="bottom-right" reverseOrder={false} />
+      <Router>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/login" element={<Login />} />
+          <Route
+            path="/admin"
+            element={
+              <PrivateRoute>
+                <Admin />
+              </PrivateRoute>
+            }
+          />
+        </Routes>
+      </Router>
+    </>
   );
 };
 
