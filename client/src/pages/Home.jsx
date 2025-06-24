@@ -1,58 +1,61 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
-import intlTelInput from 'intl-tel-input';
-import 'intl-tel-input/build/css/intlTelInput.css';
-import 'intl-tel-input/build/js/utils.js';
-import { FaUser, FaHeartbeat, FaUsers, FaTrashAlt } from 'react-icons/fa';
 import india from '../assets/indiaData.json';
 
 const Home = () => {
-    const phoneInputRef = useRef(null);
-    const itiRef = useRef(null);
     const [loading, setLoading] = useState(false);
+    const [confirmDeleteIndex, setConfirmDeleteIndex] = useState(null);
+    const [isSubmitted, setIsSubmitted] = useState(false);
+    const [selectedCountryCode, setSelectedCountryCode] = useState('+91');
+
+    const countryCodes = [
+        { code: '+91', label: '🇮🇳 India' },
+        { code: '+1', label: '🇺🇸 USA' },
+        { code: '+971', label: '🇦🇪 UAE' },
+        { code: '+44', label: '🇬🇧 UK' },
+        { code: '+61', label: '🇦🇺 Australia' },
+        { code: '+49', label: '🇩🇪 Germany' },
+        { code: '+33', label: '🇫🇷 France' },
+        { code: '+65', label: '🇸🇬 Singapore' },
+        { code: '+60', label: '🇲🇾 Malaysia' },
+        { code: '+94', label: '🇱🇰 Sri Lanka' },
+        { code: '+973', label: '🇧🇭 Bahrain' },
+        { code: '+974', label: '🇶🇦 Qatar' },
+        { code: '+968', label: '🇴🇲 Oman' },
+        { code: '+966', label: '🇸🇦 Saudi' },
+        { code: '+41', label: '🇨🇭 Switzerland' },
+    ];
 
     const [formData, setFormData] = useState({
         firstName: '',
         lastName: '',
         email: '',
-        mobile: '',
-        lovedOnes: [
-            { name: '', age: '', gender: '', state: '', district: '', area: '', contact: '+91' }
-        ],
-        healthIssues: '',
-        checklist: { diabetes: false, bp: false, heart: false },
+        mobile: '+91',
+        lovedOnes: [{
+            name: '', age: '', gender: '', state: '', district: '', area: '', contact: '+91'
+        }],
     });
-
-    const [isSubmitted, setIsSubmitted] = useState(false);
 
     useEffect(() => {
         AOS.init({ duration: 1000 });
-
-        if (!phoneInputRef.current) return;
-
-        itiRef.current = intlTelInput(phoneInputRef.current, {
-            initialCountry: 'in',
-            separateDialCode: false,
-            dropdownContainer: document.body,
-            onlyCountries: [
-                'in', 'us', 'ae', 'gb', 'ca', 'au', 'de', 'fr', 'sg',
-                'my', 'za', 'nz', 'kw', 'sa', 'om', 'qa', 'ch', 'lk'
-            ],
-            utilsScript: 'https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.min.js',
-        });
-
-        const handleChange = () => {
-            const number = itiRef.current.getNumber();
-            setFormData((prev) => ({ ...prev, mobile: number }));
-        };
-
-        phoneInputRef.current.addEventListener('countrychange', handleChange);
-
-        return () => {
-            phoneInputRef.current?.removeEventListener('countrychange', handleChange);
-        };
     }, []);
+
+    const handleCountryChange = (e) => {
+        const code = e.target.value;
+        setSelectedCountryCode(code);
+        setFormData(prev => ({ ...prev, mobile: code }));
+    };
+
+    const handleMobileInputChange = (e) => {
+        let input = e.target.value;
+        if (!input.startsWith(selectedCountryCode)) {
+            input = selectedCountryCode;
+        }
+        const numberAfterCode = input.slice(selectedCountryCode.length).replace(/[^\d]/g, '').slice(0, 10);
+        const finalNumber = selectedCountryCode + numberAfterCode;
+        setFormData(prev => ({ ...prev, mobile: finalNumber }));
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -68,7 +71,7 @@ const Home = () => {
                 setIsSubmitted(true);
             } else {
                 alert('Submission failed');
-                console.log(data);
+                console.error(data);
             }
         } catch (error) {
             console.error('Error submitting form:', error);
@@ -77,40 +80,36 @@ const Home = () => {
         }
     };
 
-    const handleChange = (e) => {
-        const { name, value, type, checked } = e.target;
-        if (['diabetes', 'bp', 'heart'].includes(name)) {
-            setFormData({
-                ...formData,
-                checklist: { ...formData.checklist, [name]: checked },
-            });
-        } else {
-            setFormData({ ...formData, [name]: value });
-        }
-    };
-
     const handleLovedOneChange = (index, field, value) => {
         const updated = [...formData.lovedOnes];
-        updated[index][field] = value;
+        if (field === 'name') value = value.replace(/[^A-Za-z\s]/g, '');
         if (field === 'state') updated[index]['district'] = '';
+        updated[index][field] = value;
         setFormData({ ...formData, lovedOnes: updated });
     };
 
     const handleAddLovedOne = () => {
-        setFormData({
-            ...formData,
-            lovedOnes: [...formData.lovedOnes, {
+        setFormData(prev => ({
+            ...prev,
+            lovedOnes: [...prev.lovedOnes, {
                 name: '', age: '', gender: '', state: '', district: '', area: '', contact: '+91'
-            }],
-        });
+            }]
+        }));
     };
 
-    const handleRemoveLovedOne = (index) => {
-        if (index !== 0) {
-            const updated = [...formData.lovedOnes];
-            updated.splice(index, 1);
-            setFormData({ ...formData, lovedOnes: updated });
-        }
+    const confirmDeleteLovedOne = (index) => {
+        setConfirmDeleteIndex(index);
+    };
+
+    const handleConfirmDelete = () => {
+        const updated = [...formData.lovedOnes];
+        updated.splice(confirmDeleteIndex, 1);
+        setFormData({ ...formData, lovedOnes: updated });
+        setConfirmDeleteIndex(null);
+    };
+
+    const handleCancelDelete = () => {
+        setConfirmDeleteIndex(null);
     };
 
     const ThankYouMessage = () => (
@@ -125,66 +124,77 @@ const Home = () => {
     if (isSubmitted) return <ThankYouMessage />;
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-[#e0f7fa] to-[#fce4ec] p-6 flex items-center justify-center">
+        <div className="relative min-h-screen bg-gradient-to-br from-teal-200 to-green-100 p-6 flex items-center justify-center">
             <div className="w-full max-w-4xl bg-white/70 backdrop-blur-lg rounded-3xl shadow-2xl p-10">
-                <h1 className="text-5xl font-extrabold text-center text-[#d81b60] mb-10 tracking-wider font-serif">
+                <h1 className="text-5xl font-extrabold text-center text-teal-500 mb-10 tracking-wider font-serif">
                     NRI Enquiry Portal
                 </h1>
 
                 <form className="space-y-12" onSubmit={handleSubmit}>
-                    {/* Contact Info */}
                     <section className="space-y-6">
-                        <div className="border-l-4 border-[#d81b60] pl-4">
-                            <h2 className="text-2xl font-bold text-[#d81b60]">Contact Information</h2>
+                        <div className="border-l-4 border-teal-500 pl-4">
+                            <h2 className="text-2xl font-bold text-teal-500">Contact Information</h2>
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                            <input type="text" name="firstName" placeholder="First Name" className="fancy-input" value={formData.firstName} onChange={handleChange} required />
-                            <input type="text" name="lastName" placeholder="Last Name" className="fancy-input" value={formData.lastName} onChange={handleChange} required />
-                            <input type="email" name="email" placeholder="Email Address" className="fancy-input" value={formData.email} onChange={handleChange} required />
-                            <input ref={phoneInputRef} type="tel" className="fancy-input md:col-span-3" placeholder="Mobile Number" required />
+                            <input type="text" name="firstName" placeholder="First Name" className="fancy-input" value={formData.firstName} onChange={e => setFormData({ ...formData, firstName: e.target.value })} required />
+                            <input type="text" name="lastName" placeholder="Last Name" className="fancy-input" value={formData.lastName} onChange={e => setFormData({ ...formData, lastName: e.target.value })} required />
+                            <input type="email" name="email" placeholder="Email Address" className="fancy-input" value={formData.email} onChange={e => setFormData({ ...formData, email: e.target.value })} required />
+                            <div className="md:col-span-3 grid grid-cols-3 gap-2 items-center">
+                                <select
+                                    value={selectedCountryCode}
+                                    onChange={handleCountryChange}
+                                    className="fancy-input col-span-1"
+                                >
+                                    {countryCodes.map((country) => (
+                                        <option key={country.code} value={country.code}>
+                                            {country.label} ({country.code})
+                                        </option>
+                                    ))}
+                                </select>
+                                <input
+                                    type="tel"
+                                    placeholder="Mobile Number"
+                                    className="fancy-input col-span-2"
+                                    value={formData.mobile}
+                                    onChange={handleMobileInputChange}
+                                    onKeyDown={(e) => {
+                                        if ((e.key === 'Backspace' || e.key === 'Delete') && e.target.selectionStart <= selectedCountryCode.length) {
+                                            e.preventDefault();
+                                        }
+                                    }}
+                                    required
+                                />
+                            </div>
                         </div>
                     </section>
 
-                    {/* Loved Ones */}
                     <section className="space-y-6">
-                        <div className="border-l-4 border-[#d81b60] pl-4">
-                            <h2 className="text-2xl font-bold text-[#d81b60]">Loved Ones Details</h2>
+                        <div className="border-l-4 border-teal-500 pl-4">
+                            <h2 className="text-2xl font-bold text-teal-500">Loved Ones Details</h2>
                         </div>
                         {formData.lovedOnes.map((p, i) => (
-                            <div key={i} className="grid grid-cols-1 md:grid-cols-4 gap-4 bg-[#fce4ec]/40 p-4 rounded-xl">
+                            <div key={i} className="grid grid-cols-1 md:grid-cols-4 gap-4 bg-teal-100/40 p-4 rounded-xl">
                                 <input type="text" placeholder="Name" className="fancy-input" value={p.name} onChange={(e) => handleLovedOneChange(i, 'name', e.target.value)} />
                                 <input type="number" placeholder="Age" className="fancy-input" value={p.age} onChange={(e) => handleLovedOneChange(i, 'age', e.target.value)} />
                                 <select className="fancy-input" value={p.gender} onChange={(e) => handleLovedOneChange(i, 'gender', e.target.value)}>
                                     <option value="">Gender</option>
                                     <option value="Male">Male</option>
                                     <option value="Female">Female</option>
+                                    <option value="Female">Other</option>
                                 </select>
-                                <input
-                                    type="text"
-                                    placeholder="Contact No"
-                                    className="fancy-input"
-                                    value={p.contact}
-                                    onChange={(e) => {
-                                        let input = e.target.value;
-
-                                        if (!input.startsWith('+91')) {
-                                            input = '+91' + input.replace(/^\+*/, '').replace(/^91/, '');
-                                        }
-
-                                        const digitsOnly = input.slice(3).replace(/\D/g, '').slice(0, 10);
-                                        const formatted = `+91${digitsOnly}`;
-
-                                        handleLovedOneChange(i, 'contact', formatted);
-                                    }}
-                                    onKeyDown={(e) => {
-                                        if (
-                                            (e.key === 'Backspace' || e.key === 'Delete') &&
-                                            e.target.selectionStart <= 3
-                                        ) {
-                                            e.preventDefault();
-                                        }
-                                    }}
-                                />
+                                <input type="text" placeholder="Contact No" className="fancy-input" value={p.contact} onChange={(e) => {
+                                    let input = e.target.value;
+                                    if (!input.startsWith('+91')) {
+                                        input = '+91' + input.replace(/[^\d]/g, '').slice(0, 10);
+                                    } else {
+                                        input = '+91' + input.slice(3).replace(/[^\d]/g, '').slice(0, 10);
+                                    }
+                                    handleLovedOneChange(i, 'contact', input);
+                                }} onKeyDown={(e) => {
+                                    if ((e.key === 'Backspace' || e.key === 'Delete') && e.target.selectionStart <= 3) {
+                                        e.preventDefault();
+                                    }
+                                }} />
                                 <select className="fancy-input" value={p.state} onChange={(e) => handleLovedOneChange(i, 'state', e.target.value)}>
                                     <option value="">State</option>
                                     {Object.keys(india).map(state => <option key={state}>{state}</option>)}
@@ -193,42 +203,24 @@ const Home = () => {
                                     <option value="">District</option>
                                     {p.state && india[p.state]?.map(d => <option key={d}>{d}</option>)}
                                 </select>
-                                <input type="text" placeholder="Area" className="fancy-input md:col-span-2" value={p.area} onChange={(e) => handleLovedOneChange(i, 'area', e.target.value)} />
+                                <input type="text" placeholder="Pincode" className="fancy-input md:col-span-2" value={p.area} maxLength={6} onChange={(e) => {
+                                    const value = e.target.value.replace(/\D/g, '').slice(0, 6);
+                                    handleLovedOneChange(i, 'area', value);
+                                }} required />
                                 {formData.lovedOnes.length > 1 && (
-                                    <button type="button" onClick={() => handleRemoveLovedOne(i)} className="cursor-pointer text-red-500 hover:text-red-700 text-lg">
+                                    <button type="button" onClick={() => confirmDeleteLovedOne(i)} className="cursor-pointer text-red-500 hover:text-red-700 text-lg">
                                         Remove
                                     </button>
                                 )}
                             </div>
                         ))}
-                        <button type="button" onClick={handleAddLovedOne} className="cursor-pointer bg-[#d81b60] text-white px-6 py-2 rounded-full hover:bg-[#ad1457] shadow-lg transition">
+                        <button type="button" onClick={handleAddLovedOne} className="cursor-pointer bg-teal-500 text-white px-6 py-2 rounded-full hover:bg-teal-400 shadow-lg transition">
                             + Add Member
                         </button>
                     </section>
 
-                    {/* Medical Info */}
-                    <section className="space-y-6">
-                        <div className="border-l-4 border-[#d81b60] pl-4">
-                            <h2 className="text-2xl font-bold text-[#d81b60]">Medical Information</h2>
-                        </div>
-                        <textarea name="healthIssues" placeholder="Describe health issues..." rows="4" className="fancy-input w-full" value={formData.healthIssues} onChange={handleChange} />
-                        <div className="flex gap-4 flex-wrap">
-                            {['diabetes', 'bp', 'heart'].map((issue) => (
-                                <label key={issue} className="inline-flex items-center gap-2 bg-[#fff3f8] px-4 py-2 rounded-full shadow text-gray-700">
-                                    <input type="checkbox" name={issue} checked={formData.checklist[issue]} onChange={handleChange} />
-                                    {issue === 'bp' ? 'Blood Pressure' : issue.charAt(0).toUpperCase() + issue.slice(1)}
-                                </label>
-                            ))}
-                        </div>
-                    </section>
-
                     <div className="text-center">
-                        <button
-                            type="submit"
-                            disabled={loading}
-                            className={`cursor-pointer bg-[#d81b60] hover:bg-[#ad1457] text-white text-xl px-10 py-3 rounded-full shadow-xl transition duration-300 ${loading ? 'opacity-70 cursor-not-allowed' : 'hover:scale-105'
-                                }`}
-                        >
+                        <button type="submit" disabled={loading} className={`cursor-pointer bg-teal-500 hover:bg-teal-400 text-white text-xl px-10 py-3 rounded-full shadow-xl transition duration-300 ${loading ? 'opacity-70 cursor-not-allowed' : 'hover:scale-105'}`}>
                             {loading ? (
                                 <span className="flex items-center justify-center gap-2">
                                     <svg className="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
@@ -244,6 +236,18 @@ const Home = () => {
                     </div>
                 </form>
             </div>
+
+            {confirmDeleteIndex !== null && (
+                <div className="fixed inset-0 flex items-center justify-center backdrop-blur-sm bg-opacity-1 z-50">
+                    <div className="bg-white rounded-xl p-8 shadow-xl text-center max-w-sm">
+                        <h2 className="text-xl font-bold mb-4">Are you sure you want to delete?</h2>
+                        <div className="flex justify-center gap-4">
+                            <button onClick={handleConfirmDelete} className="px-6 py-2 bg-red-500 text-white rounded hover:bg-red-600">Delete</button>
+                            <button onClick={handleCancelDelete} className="px-6 py-2 bg-gray-300 rounded hover:bg-gray-400">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

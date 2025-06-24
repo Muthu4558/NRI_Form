@@ -11,18 +11,11 @@ const lovedOneSchema = new mongoose.Schema({
 });
 
 const formDataSchema = new mongoose.Schema({
-  firstName: String,
-  lastName: String,
-  email: String,
-  mobile: String,
+  firstName: { type: String, required: true },
+  lastName: { type: String, required: true },
+  email: { type: String, required: true },
+  mobile: { type: String, required: true },
   lovedOnes: [lovedOneSchema],
-  healthIssues: String,
-  checklist: {
-    diabetes: Boolean,
-    bp: Boolean,
-    heart: Boolean,
-  },
 }, { timestamps: true });
 
-const FormData = mongoose.model("FormData", formDataSchema);
-export default FormData;
+export default mongoose.model("FormData", formDataSchema);
