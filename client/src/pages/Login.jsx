@@ -20,9 +20,9 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-400 via-pink-300 to-blue-400 animate-gradient-x">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-teal-200 to-green-100 animate-gradient-x">
       <div className="relative w-full max-w-md bg-white/20 backdrop-blur-md rounded-3xl shadow-lg border border-white/30 p-10">
-        <h2 className="text-3xl font-bold text-center text-white mb-6">Admin Login</h2>
+        <h2 className="text-3xl font-bold text-center mb-6">Admin Login</h2>
         <form onSubmit={handleLogin} className="space-y-6">
           <input
             type="email"
@@ -42,7 +42,7 @@ const Login = () => {
           />
           <button
             type="submit"
-            className="w-full py-3 rounded-xl bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold shadow-md hover:scale-105 transform transition duration-300"
+            className="w-full py-3 rounded-xl bg-gradient-to-r from-purple-500 to-teal-500 text-white font-semibold shadow-md hover:scale-105 transform transition duration-300"
           >
             🔐 Login
           </button>
