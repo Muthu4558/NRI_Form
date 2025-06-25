@@ -27,13 +27,21 @@ const Home = () => {
         { code: '+41', label: '🇨🇭 Switzerland' },
     ];
 
+    const healthOptions = [
+        "Diabetics",
+        "BP",
+        "Cholestrol",
+        "Heart issue",
+        "Bone and joint issues"
+    ];
+
     const [formData, setFormData] = useState({
         firstName: '',
         lastName: '',
         email: '',
         mobile: '+91',
         lovedOnes: [{
-            name: '', age: '', gender: '', state: '', district: '', area: '', contact: '+91'
+            name: '', age: '', gender: '', state: '', district: '', area: '', contact: '+91', healthConcerns: []
         }],
     });
 
@@ -88,11 +96,22 @@ const Home = () => {
         setFormData({ ...formData, lovedOnes: updated });
     };
 
+    const handleHealthConcernChange = (index, concern) => {
+        const updated = [...formData.lovedOnes];
+        const concerns = updated[index].healthConcerns || [];
+        if (concerns.includes(concern)) {
+            updated[index].healthConcerns = concerns.filter(c => c !== concern);
+        } else {
+            updated[index].healthConcerns = [...concerns, concern];
+        }
+        setFormData({ ...formData, lovedOnes: updated });
+    };
+
     const handleAddLovedOne = () => {
         setFormData(prev => ({
             ...prev,
             lovedOnes: [...prev.lovedOnes, {
-                name: '', age: '', gender: '', state: '', district: '', area: '', contact: '+91'
+                name: '', age: '', gender: '', state: '', district: '', area: '', contact: '+91', healthConcerns: []
             }]
         }));
     };
@@ -131,6 +150,7 @@ const Home = () => {
                 </h1>
 
                 <form className="space-y-12" onSubmit={handleSubmit}>
+
                     <section className="space-y-6">
                         <div className="border-l-4 border-teal-500 pl-4">
                             <h2 className="text-2xl font-bold text-teal-500">Contact Information</h2>
@@ -143,7 +163,7 @@ const Home = () => {
                                 <select
                                     value={selectedCountryCode}
                                     onChange={handleCountryChange}
-                                    className="fancy-input col-span-1"
+                                    className="fancy-input"
                                 >
                                     {countryCodes.map((country) => (
                                         <option key={country.code} value={country.code}>
@@ -154,7 +174,7 @@ const Home = () => {
                                 <input
                                     type="tel"
                                     placeholder="Mobile Number"
-                                    className="fancy-input col-span-2"
+                                    className="fancy-input col-span-1"
                                     value={formData.mobile}
                                     onChange={handleMobileInputChange}
                                     onKeyDown={(e) => {
@@ -207,6 +227,21 @@ const Home = () => {
                                     const value = e.target.value.replace(/\D/g, '').slice(0, 6);
                                     handleLovedOneChange(i, 'area', value);
                                 }} required />
+                                <div className="md:col-span-4">
+                                    <label className="block font-semibold text-teal-600 mb-1">Health Concerns</label>
+                                    <div className="grid grid-cols-2 gap-2">
+                                        {healthOptions.map(option => (
+                                            <label key={option} className="flex items-center gap-2">
+                                                <input
+                                                    type="checkbox"
+                                                    checked={p.healthConcerns.includes(option)}
+                                                    onChange={() => handleHealthConcernChange(i, option)}
+                                                />
+                                                {option}
+                                            </label>
+                                        ))}
+                                    </div>
+                                </div>
                                 {formData.lovedOnes.length > 1 && (
                                     <button type="button" onClick={() => confirmDeleteLovedOne(i)} className="cursor-pointer text-red-500 hover:text-red-700 text-lg">
                                         Remove

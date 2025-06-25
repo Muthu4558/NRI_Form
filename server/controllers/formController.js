@@ -1,7 +1,7 @@
 import FormData from "../models/FormData.js";
 import nodemailer from "nodemailer";
 
-// POST /api/form/submit
+// Submit form
 export const submitForm = async (req, res) => {
   try {
     const formPayload = req.body;
@@ -17,6 +17,9 @@ export const submitForm = async (req, res) => {
         auth: {
           user: process.env.MAIL_USER,
           pass: process.env.MAIL_PASS,
+        },
+        tls: {
+          rejectUnauthorized: false, // 👈 This bypasses the certificate check
         },
       });
 
@@ -41,7 +44,6 @@ export const submitForm = async (req, res) => {
         console.log("Confirmation email sent to:", email);
       } catch (mailError) {
         console.warn("Email send failed:", mailError.message);
-        // You may choose to log this to a monitoring service
       }
     }
 
@@ -59,16 +61,47 @@ export const submitForm = async (req, res) => {
   }
 };
 
-// GET /api/form/all
+
+// Get all forms
 export const getAllForms = async (_req, res) => {
   try {
     const forms = await FormData.find().sort({ createdAt: -1 });
     res.status(200).json(forms);
   } catch (error) {
-    console.error("Fetching forms error:", error);
-    res.status(500).json({
-      message: "Error fetching form data",
-      error: error.message,
-    });
+    res.status(500).json({ message: "Error fetching form data", error: error.message });
+  }
+};
+
+// Update status or remarks
+export const updateForm = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { remark, statusEmail, statusWhatsapp, statusPhone } = req.body;
+
+    const updated = await FormData.findByIdAndUpdate(
+      id,
+      {
+        ...(remark !== undefined && { remark }),
+        ...(statusEmail !== undefined && { statusEmail }),
+        ...(statusWhatsapp !== undefined && { statusWhatsapp }),
+        ...(statusPhone !== undefined && { statusPhone }),
+      },
+      { new: true }
+    );
+
+    res.status(200).json(updated);
+  } catch (err) {
+    res.status(500).json({ message: "Update failed", error: err.message });
+  }
+};
+
+// Delete a form
+export const deleteForm = async (req, res) => {
+  try {
+    const { id } = req.params;
+    await FormData.findByIdAndDelete(id);
+    res.status(200).json({ message: "Form deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ message: "Delete failed", error: error.message });
   }
 };
