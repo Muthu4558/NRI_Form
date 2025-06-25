@@ -166,13 +166,13 @@ const Home = () => {
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                             <label className="fancy-label">First Name<span className="text-red-500">*</span>
-                                <input type="text" className="fancy-input" value={formData.firstName} onChange={e => setFormData({ ...formData, firstName: e.target.value })} required />
+                                <input type="text" className="fancy-input" placeholder='Enter Your First Name' value={formData.firstName} onChange={e => setFormData({ ...formData, firstName: e.target.value })} required />
                             </label>
                             <label className="fancy-label">Last Name<span className="text-red-500">*</span>
-                                <input type="text" className="fancy-input" value={formData.lastName} onChange={e => setFormData({ ...formData, lastName: e.target.value })} required />
+                                <input type="text" className="fancy-input" placeholder='Enter Your Last Name' value={formData.lastName} onChange={e => setFormData({ ...formData, lastName: e.target.value })} required />
                             </label>
                             <label className="fancy-label">Email<span className="text-red-500">*</span>
-                                <input type="email" className="fancy-input" value={formData.email} onChange={e => setFormData({ ...formData, email: e.target.value })} required />
+                                <input type="email" className="fancy-input" placeholder='Enter Your Mail' value={formData.email} onChange={e => setFormData({ ...formData, email: e.target.value })} required />
                             </label>
                             <div className="md:col-span-3 grid grid-cols-3 gap-2 items-center">
                                 <select value={selectedCountryCode} onChange={handleCountryChange} className="fancy-input">
@@ -182,7 +182,7 @@ const Home = () => {
                                 </select>
                                 <input
                                     type="tel"
-                                    placeholder="Mobile Number"
+                                    placeholder="Enter Your Mobile Number"
                                     className="fancy-input col-span-2"
                                     value={formData.mobile}
                                     onChange={handleMobileInputChange}
