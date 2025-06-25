@@ -141,7 +141,7 @@ const Home = () => {
     };
 
     const ThankYouMessage = () => (
-        <div className="flex flex-col justify-center items-center min-h-screen bg-gradient-to-br from-[#229ea6] to-[#65d1ce] text-white px-6 text-center">
+        <div className="flex flex-col justify-center items-center min-h-screen bg-gradient-to-br from-teal-200 to-green-100 px-6 text-center">
             <h1 className="text-5xl font-bold mb-4">🎉 Thank you!</h1>
             <p className="text-lg">Our expert will call you shortly from</p>
             <p className="text-2xl font-semibold mt-2">📞 8148809313</p>
