@@ -152,144 +152,119 @@ const Home = () => {
     if (isSubmitted) return <ThankYouMessage />;
 
     return (
-        <div className="relative min-h-screen bg-gradient-to-br from-teal-200 to-green-100 p-6 flex items-center justify-center">
-            <div className="w-full max-w-4xl bg-white backdrop-blur-lg rounded-3xl shadow-2xl p-10">
-                <h1 className="text-5xl font-extrabold text-center text-teal-500 mb-10 tracking-wider font-serif">
-                    NRI Enquiry Portal
-                </h1>
+         <div className="relative min-h-screen bg-gradient-to-br from-teal-200 to-green-100 p-4 md:p-6 flex items-center justify-center">
+      <div className="w-full max-w-5xl bg-white backdrop-blur-lg rounded-3xl shadow-2xl p-4 md:p-10">
+        <h1 className="text-3xl md:text-5xl font-extrabold text-center text-teal-500 mb-6 md:mb-10 tracking-wider font-serif">
+          NRI Enquiry Portal
+        </h1>
 
-                <form className="space-y-12" onSubmit={handleSubmit}>
-                    {/* Contact Info */}
-                    <section className="space-y-6">
-                        <div className="border-l-4 border-teal-500 pl-4">
-                            <h2 className="text-2xl font-bold text-teal-500">Contact Information</h2>
-                        </div>
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                            <label className="fancy-label">First Name<span className="text-red-500">*</span>
-                                <input type="text" className="fancy-input" placeholder='Enter Your First Name' value={formData.firstName} onChange={e => setFormData({ ...formData, firstName: e.target.value })} required />
-                            </label>
-                            <label className="fancy-label">Last Name<span className="text-red-500">*</span>
-                                <input type="text" className="fancy-input" placeholder='Enter Your Last Name' value={formData.lastName} onChange={e => setFormData({ ...formData, lastName: e.target.value })} required />
-                            </label>
-                            <label className="fancy-label">Email<span className="text-red-500">*</span>
-                                <input type="email" className="fancy-input" placeholder='Enter Your Mail' value={formData.email} onChange={e => setFormData({ ...formData, email: e.target.value })} required />
-                            </label>
-                            <div className="md:col-span-3 grid grid-cols-3 gap-2 items-center">
-                                <select value={selectedCountryCode} onChange={handleCountryChange} className="fancy-input">
-                                    {countryCodes.map((country) => (
-                                        <option key={country.code} value={country.code}>{country.label} ({country.code})</option>
-                                    ))}
-                                </select>
-                                <input
-                                    type="tel"
-                                    placeholder="Enter Your Mobile Number"
-                                    className="fancy-input col-span-2"
-                                    value={formData.mobile}
-                                    onChange={handleMobileInputChange}
-                                    onKeyDown={(e) => {
-                                        if ((e.key === 'Backspace' || e.key === 'Delete') && e.target.selectionStart <= selectedCountryCode.length) {
-                                            e.preventDefault();
-                                        }
-                                    }}
-                                    required
-                                />
-                            </div>
-                        </div>
-                    </section>
-
-                    {/* Loved Ones */}
-                    <section className="space-y-6">
-                        <div className="border-l-4 border-teal-500 pl-4">
-                            <h2 className="text-2xl font-bold text-teal-500">Loved Ones Details</h2>
-                        </div>
-                        {formData.lovedOnes.map((p, i) => (
-                            <div key={i} className="grid grid-cols-1 md:grid-cols-4 gap-4 bg-teal-100/40 p-4 rounded-xl">
-                                <input type="text" placeholder="Name *" className="fancy-input" value={p.name} onChange={(e) => handleLovedOneChange(i, 'name', e.target.value)} required />
-                                <input type="number" placeholder="Age *" className="fancy-input" value={p.age} onChange={(e) => handleLovedOneChange(i, 'age', e.target.value)} required />
-                                <select className="fancy-input" value={p.gender} onChange={(e) => handleLovedOneChange(i, 'gender', e.target.value)} required>
-                                    <option value="">Gender *</option>
-                                    <option value="Male">Male</option>
-                                    <option value="Female">Female</option>
-                                    <option value="Other">Other</option>
-                                </select>
-                                <input type="text" placeholder="Contact No *" className="fancy-input" value={p.contact} onChange={(e) => {
-                                    let input = e.target.value;
-                                    if (!input.startsWith('+91')) {
-                                        input = '+91' + input.replace(/[^\d]/g, '').slice(0, 10);
-                                    } else {
-                                        input = '+91' + input.slice(3).replace(/[^\d]/g, '').slice(0, 10);
-                                    }
-                                    handleLovedOneChange(i, 'contact', input);
-                                }} onKeyDown={(e) => {
-                                    if ((e.key === 'Backspace' || e.key === 'Delete') && e.target.selectionStart <= 3) {
-                                        e.preventDefault();
-                                    }
-                                }} required />
-                                <select className="fancy-input" value={p.state} onChange={(e) => handleLovedOneChange(i, 'state', e.target.value)} required>
-                                    <option value="">State *</option>
-                                    {Object.keys(india).map(state => <option key={state}>{state}</option>)}
-                                </select>
-                                <select className="fancy-input" value={p.district} onChange={(e) => handleLovedOneChange(i, 'district', e.target.value)} required>
-                                    <option value="">District *</option>
-                                    {p.state && india[p.state]?.map(d => <option key={d}>{d}</option>)}
-                                </select>
-                                <input type="text" placeholder="Pincode *" className="fancy-input md:col-span-2" value={p.area} maxLength={6} onChange={(e) => {
-                                    const value = e.target.value.replace(/\D/g, '').slice(0, 6);
-                                    handleLovedOneChange(i, 'area', value);
-                                }} required />
-                                <div className="md:col-span-4">
-                                    <label className="block font-semibold text-teal-600 mb-1">Health Concerns</label>
-                                    <div className="grid grid-cols-2 gap-2">
-                                        {healthOptions.map(option => (
-                                            <label key={option} className="flex items-center gap-2">
-                                                <input type="checkbox" checked={p.healthConcerns.includes(option)} onChange={() => handleHealthConcernChange(i, option)} />
-                                                {option}
-                                            </label>
-                                        ))}
-                                    </div>
-                                </div>
-                                {formData.lovedOnes.length > 1 && (
-                                    <button type="button" onClick={() => confirmDeleteLovedOne(i)} className="cursor-pointer text-red-500 hover:text-red-700 text-lg">
-                                        Remove
-                                    </button>
-                                )}
-                            </div>
-                        ))}
-                        <button type="button" onClick={handleAddLovedOne} className="cursor-pointer bg-teal-500 text-white px-6 py-2 rounded-full hover:bg-teal-400 shadow-lg transition">
-                            + Add Member
-                        </button>
-                    </section>
-
-                    <div className="text-center">
-                        <button type="submit" disabled={loading} className={`cursor-pointer bg-teal-500 hover:bg-teal-400 text-white text-xl px-10 py-3 rounded-full shadow-xl transition duration-300 ${loading ? 'opacity-70 cursor-not-allowed' : 'hover:scale-105'}`}>
-                            {loading ? (
-                                <span className="flex items-center justify-center gap-2">
-                                    <svg className="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
-                                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
-                                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-                                    </svg>
-                                    Submitting...
-                                </span>
-                            ) : (
-                                "Submit Enquiry"
-                            )}
-                        </button>
-                    </div>
-                </form>
+        <form className="space-y-10 md:space-y-12" onSubmit={handleSubmit}>
+          {/* Contact Info */}
+          <section className="space-y-6">
+            <div className="border-l-4 border-teal-500 pl-4">
+              <h2 className="text-xl md:text-2xl font-bold text-teal-500">Contact Information</h2>
             </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+              <label className="fancy-label">First Name<span className="text-red-500">*</span>
+                <input type="text" className="fancy-input" placeholder='First Name' value={formData.firstName} onChange={e => setFormData({ ...formData, firstName: e.target.value })} required />
+              </label>
+              <label className="fancy-label">Last Name<span className="text-red-500">*</span>
+                <input type="text" className="fancy-input" placeholder='Last Name' value={formData.lastName} onChange={e => setFormData({ ...formData, lastName: e.target.value })} required />
+              </label>
+              <label className="fancy-label">Email<span className="text-red-500">*</span>
+                <input type="email" className="fancy-input" placeholder='Email' value={formData.email} onChange={e => setFormData({ ...formData, email: e.target.value })} required />
+              </label>
+              <div className="col-span-1 sm:col-span-2 md:col-span-3 grid grid-cols-3 gap-2 items-center">
+                <select value={selectedCountryCode} onChange={handleCountryChange} className="fancy-input">
+                  {countryCodes.map((c) => <option key={c.code} value={c.code}>{c.label} ({c.code})</option>)}
+                </select>
+                <input type="tel" placeholder="Mobile Number" className="fancy-input col-span-2" value={formData.mobile} onChange={handleMobileInputChange} onKeyDown={(e) => {
+                  if ((e.key === 'Backspace' || e.key === 'Delete') && e.target.selectionStart <= selectedCountryCode.length) {
+                    e.preventDefault();
+                  }
+                }} required />
+              </div>
+            </div>
+          </section>
 
-            {confirmDeleteIndex !== null && (
-                <div className="fixed inset-0 flex items-center justify-center backdrop-blur-sm bg-opacity-1 z-50">
-                    <div className="bg-white rounded-xl p-8 shadow-xl text-center max-w-sm">
-                        <h2 className="text-xl font-bold mb-4">Are you sure you want to delete?</h2>
-                        <div className="flex justify-center gap-4">
-                            <button onClick={handleConfirmDelete} className="px-6 py-2 bg-red-500 text-white rounded hover:bg-red-600">Delete</button>
-                            <button onClick={handleCancelDelete} className="px-6 py-2 bg-gray-300 rounded hover:bg-gray-400">Cancel</button>
-                        </div>
-                    </div>
+          {/* Loved Ones */}
+          <section className="space-y-6">
+            <div className="border-l-4 border-teal-500 pl-4">
+              <h2 className="text-xl md:text-2xl font-bold text-teal-500">Loved Ones Details</h2>
+            </div>
+            {formData.lovedOnes.map((p, i) => (
+              <div key={i} className="grid grid-cols-1 md:grid-cols-4 gap-4 bg-teal-100/40 p-4 rounded-xl">
+                <input type="text" placeholder="Name *" className="fancy-input" value={p.name} onChange={e => handleLovedOneChange(i, 'name', e.target.value)} required />
+                <input type="number" placeholder="Age *" className="fancy-input" value={p.age} onChange={e => handleLovedOneChange(i, 'age', e.target.value)} required />
+                <select className="fancy-input" value={p.gender} onChange={e => handleLovedOneChange(i, 'gender', e.target.value)} required>
+                  <option value="">Gender *</option>
+                  <option value="Male">Male</option>
+                  <option value="Female">Female</option>
+                  <option value="Other">Other</option>
+                </select>
+                <input type="text" placeholder="Contact No *" className="fancy-input" value={p.contact} onChange={e => {
+                  let input = e.target.value;
+                  if (!input.startsWith('+91')) input = '+91' + input.replace(/[^\d]/g, '').slice(0, 10);
+                  else input = '+91' + input.slice(3).replace(/[^\d]/g, '').slice(0, 10);
+                  handleLovedOneChange(i, 'contact', input);
+                }} onKeyDown={e => (e.key === 'Backspace' || e.key === 'Delete') && e.target.selectionStart <= 3 && e.preventDefault()} required />
+                <select className="fancy-input" value={p.state} onChange={e => handleLovedOneChange(i, 'state', e.target.value)} required>
+                  <option value="">State *</option>
+                  {Object.keys(india).map(state => <option key={state}>{state}</option>)}
+                </select>
+                <select className="fancy-input" value={p.district} onChange={e => handleLovedOneChange(i, 'district', e.target.value)} required>
+                  <option value="">District *</option>
+                  {p.state && india[p.state]?.map(d => <option key={d}>{d}</option>)}
+                </select>
+                <input type="text" placeholder="Pincode *" className="fancy-input md:col-span-2" value={p.area} maxLength={6} onChange={e => handleLovedOneChange(i, 'area', e.target.value.replace(/\D/g, '').slice(0, 6))} required />
+                <div className="md:col-span-4">
+                  <label className="block font-semibold text-teal-600 mb-1">Health Concerns</label>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
+                    {healthOptions.map(opt => (
+                      <label key={opt} className="flex items-center gap-2">
+                        <input type="checkbox" checked={p.healthConcerns.includes(opt)} onChange={() => handleHealthConcernChange(i, opt)} /> {opt}
+                      </label>
+                    ))}
+                  </div>
                 </div>
-            )}
+                {formData.lovedOnes.length > 1 && (
+                  <button type="button" onClick={() => confirmDeleteLovedOne(i)} className="text-red-500 hover:text-red-700 text-sm font-semibold">Remove</button>
+                )}
+              </div>
+            ))}
+            <button type="button" onClick={handleAddLovedOne} className="bg-teal-500 text-white px-4 py-2 rounded-full hover:bg-teal-400 shadow-md transition-all">
+              + Add Member
+            </button>
+          </section>
+
+          <div className="text-center">
+            <button type="submit" disabled={loading} className={`bg-teal-500 hover:bg-teal-400 text-white text-lg px-8 py-3 rounded-full shadow-xl transition duration-300 ${loading ? 'opacity-70 cursor-not-allowed' : 'hover:scale-105'}`}>
+              {loading ? (
+                <span className="flex items-center justify-center gap-2">
+                  <svg className="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                  </svg>
+                  Submitting...
+                </span>
+              ) : "Submit Enquiry"}
+            </button>
+          </div>
+        </form>
+      </div>
+
+      {confirmDeleteIndex !== null && (
+        <div className="fixed inset-0 flex items-center justify-center backdrop-blur-sm bg-black/30 z-50">
+          <div className="bg-white rounded-xl p-6 shadow-xl text-center max-w-xs w-full">
+            <h2 className="text-lg font-bold mb-4">Are you sure you want to delete?</h2>
+            <div className="flex justify-center gap-4">
+              <button onClick={handleConfirmDelete} className="px-5 py-2 bg-red-500 text-white rounded hover:bg-red-600">Delete</button>
+              <button onClick={handleCancelDelete} className="px-5 py-2 bg-gray-300 rounded hover:bg-gray-400">Cancel</button>
+            </div>
+          </div>
         </div>
+      )}
+    </div>
     );
 };
 
